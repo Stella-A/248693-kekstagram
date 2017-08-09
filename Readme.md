@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Теймур Аббасов](https://up.htmlacademy.ru/javascript/10/user/248693).
-* Наставник: `Неизвестно`.
+* Наставник: [Вячеслав Ульянич](https://htmlacademy.ru/profile/id158443).
 
 ---
 
