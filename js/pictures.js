@@ -10,11 +10,11 @@ var COMMENTS = [
 ];
 
 var getRandomInteger = function (min, max) {
-  var rand = min - 0.5 + Math.random() * (max - min + 1)
+  var rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
 
   return rand;
-}
+};
 
 var getRandomComment = function (arr) {
   var comments = [];
@@ -24,7 +24,7 @@ var getRandomComment = function (arr) {
   }
 
   return comments.length;
-}
+};
 
 var getURL = function (min, max) {
   for (var i = 0; min <= max; i++, min++) {
@@ -32,7 +32,7 @@ var getURL = function (min, max) {
   }
 
   return photos;
-}
+};
 
 var createPhotos = function (arr) {
   for (var j = 0; j < 25; j++) {
@@ -40,11 +40,11 @@ var createPhotos = function (arr) {
       url: arr[j],
       likes: getRandomInteger(15, 200),
       comments: getRandomComment(COMMENTS)
-    }
+    };
   }
 
   return photoUsers;
-}
+};
 
 var renderPhoto = function (obj) {
   var photoElement = photoTemplate.cloneNode(true);
@@ -65,7 +65,7 @@ var showPhoto = function (obj) {
   photoElement.querySelector('.comments-count').textContent = obj.comments;
 
   return photoElement;
-}
+};
 
 var fillDOM = function (arr) {
   var fragment = document.createDocumentFragment();
