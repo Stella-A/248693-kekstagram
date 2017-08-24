@@ -1,6 +1,8 @@
 'use strict';
 
 var NUMBERS_OF_PHOTO = 25;
+var MIN_NUMBERS_LIKE = 15;
+var MAX_NUMBERS_LIKE = 200;
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -32,10 +34,12 @@ var getURL = function (index) {
 };
 
 var createPhotos = function (arr) {
+  arr = [];
+
   for (var i = 1; i <= NUMBERS_OF_PHOTO; i++) {
     arr.push({
       url: getURL(i),
-      likes: getRandomInteger(15, 200),
+      likes: getRandomInteger(MIN_NUMBERS_LIKE, MAX_NUMBERS_LIKE),
       comments: getRandomComments()
     });
   }
@@ -77,13 +81,9 @@ var photoTemplate = document.querySelector('#picture-template').content;
 var listElement = document.querySelector('.pictures');
 var overlayPhoto = document.querySelector('.gallery-overlay');
 
-var photos = [];
-
-getURL(1, 25);
+var photos = createPhotos(photos);
 
 document.querySelector('.upload-overlay').classList.add('hidden');
-
-createPhotos(photos);
 
 fillDOM(photos);
 
