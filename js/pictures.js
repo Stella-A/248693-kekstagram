@@ -29,7 +29,7 @@ var getRandomComments = function () {
 
 var getURL = function (index) {
   return 'photos/' + index + '.jpg';
-}
+};
 
 var createPhotos = function (arr) {
   for (var i = 1; i <= NUMBERS_OF_PHOTO; i++) {
