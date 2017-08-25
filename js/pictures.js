@@ -81,7 +81,7 @@ var photoTemplate = document.querySelector('#picture-template').content;
 var listElement = document.querySelector('.pictures');
 var overlayPhoto = document.querySelector('.gallery-overlay');
 
-var photos = createPhotos(photos);
+var photos = createPhotos();
 
 document.querySelector('.upload-overlay').classList.add('hidden');
 
