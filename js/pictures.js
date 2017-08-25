@@ -3,6 +3,8 @@
 var NUMBERS_OF_PHOTO = 25;
 var MIN_NUMBERS_LIKE = 15;
 var MAX_NUMBERS_LIKE = 200;
+var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -29,7 +31,7 @@ var getRandomComments = function () {
   return comments;
 };
 
-var getURL = function (index) {
+var getUrl = function (index) {
   return 'photos/' + index + '.jpg';
 };
 
@@ -38,7 +40,7 @@ var createPhotos = function () {
 
   for (var i = 1; i <= NUMBERS_OF_PHOTO; i++) {
     arr.push({
-      url: getURL(i),
+      url: getUrl(i),
       likes: getRandomInteger(MIN_NUMBERS_LIKE, MAX_NUMBERS_LIKE),
       comments: getRandomComments()
     });
@@ -58,7 +60,7 @@ var renderPhoto = function (obj) {
 };
 
 var renderGalleryPhoto = function (obj) {
-  var photoElement = overlayPhoto.querySelector('.gallery-overlay-preview');
+  var photoElement = overlayPhotoOpen.querySelector('.gallery-overlay-preview');
 
   photoElement.querySelector('.gallery-overlay-image').setAttribute('src', obj.url);
   photoElement.querySelector('.likes-count').textContent = obj.likes;
@@ -77,9 +79,30 @@ var fillDOM = function (arr) {
   listElement.appendChild(fragment);
 };
 
+var getIndex = function (el) {
+  var i = 0;
+  while (el = el.previousSibling) {
+    el.nodeType == 1 && i++;
+  }
+  return i;
+};
+
+var onOverlayEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeOverlay();
+  }
+};
+
+var closeOverlay = function () {
+  overlayPhotoOpen.classList.add('hidden');
+  document.removeEventListener('keydown', onOverlayEscPress);
+};
+
 var photoTemplate = document.querySelector('#picture-template').content;
 var listElement = document.querySelector('.pictures');
-var overlayPhoto = document.querySelector('.gallery-overlay');
+var overlayPhotoOpen = document.querySelector('.gallery-overlay');
+var overlayPhotoClose = document.querySelector('.gallery-overlay-close');
+var overlayPhotoImage = document.querySelector('.gallery-overlay-image');
 
 var photos = createPhotos();
 
@@ -87,6 +110,31 @@ document.querySelector('.upload-overlay').classList.add('hidden');
 
 fillDOM(photos);
 
-overlayPhoto.classList.remove('hidden');
+listElement.addEventListener('click', function (evt) {
+  evt.preventDefault();
+  var target = evt.target;
 
-overlayPhoto.appendChild(renderGalleryPhoto(photos[0]));
+  document.addEventListener('keydown', onOverlayEscPress);
+
+  while (target != this) {
+    if (target.className === 'picture') {
+      overlayPhotoOpen.classList.remove('hidden');
+      overlayPhotoOpen.appendChild(renderGalleryPhoto(photos[getIndex(target)]));
+      overlayPhotoImage.focus();
+
+      return false;
+    }
+
+    target = target.parentNode;
+  }
+});
+
+overlayPhotoClose.addEventListener('click', closeOverlay);
+
+overlayPhotoClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    if (overlayPhotoClose === document.activeElement) {
+      closeOverlay();
+    }
+  }
+});
