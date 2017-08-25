@@ -34,7 +34,7 @@ var getURL = function (index) {
 };
 
 var createPhotos = function () {
-  arr = [];
+  var arr = [];
 
   for (var i = 1; i <= NUMBERS_OF_PHOTO; i++) {
     arr.push({
