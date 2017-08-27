@@ -80,10 +80,15 @@ var fillDOM = function (arr) {
 };
 
 var getIndex = function (el) {
-  var i = 0;
-  while (el = el.previousSibling) {
-    el.nodeType == 1 && i++;
+  var i = -1;
+
+  while (el !== null) {
+    if (el.nodeType === 1) {
+      i++;
+    }
+    el = el.previousSibling;
   }
+
   return i;
 };
 
@@ -113,10 +118,11 @@ fillDOM(photos);
 listElement.addEventListener('click', function (evt) {
   evt.preventDefault();
   var target = evt.target;
+  var current = evt.currentTarget;
 
   document.addEventListener('keydown', onOverlayEscPress);
 
-  while (target != this) {
+  while (target !== current) {
     if (target.className === 'picture') {
       overlayPhotoOpen.classList.remove('hidden');
       overlayPhotoOpen.appendChild(renderGalleryPhoto(photos[getIndex(target)]));
