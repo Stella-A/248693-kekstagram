@@ -262,7 +262,6 @@ resizeControlInc.addEventListener('click', function () {
 
 effectControls.addEventListener('click', function (evt) {
   var target = evt.target;
-  var current = evt.currentTarget;
 
   if (target.tagName.toLowerCase() === 'input') {
     var effect = target.attributes['id'].nodeValue;
