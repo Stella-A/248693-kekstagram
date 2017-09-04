@@ -7,10 +7,12 @@ var ENTER_KEYCODE = 13;
 var ESC_KEYCODE = 27;
 var MIN_SCALE = 25;
 var MAX_SCALE = 100;
+var STEP_SCALE = 25;
 var INDEX_OF_STRING = 7;
-var HASHTAG = '#';
-var MAX_NUMBER_OF_HASHTAG = 5;
+var HASHTAG_SIGN = '#';
+var MAX_LENGTH_OF_HASHTAG = 5;
 var MAX_CHAR_OF_STRING = 20;
+var CHAR_OF_SPACE = ' ';
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -89,14 +91,15 @@ var fillDOM = function (arr) {
 var onOverlayEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     if (!(formDescription === document.activeElement)) {
-      closeOverlay();
+      uploadOverlay.classList.add('hidden');
+      uploadPhotoInput.value = null;
     }
+    closeOverlay();
   }
 };
 
 var closeOverlay = function () {
   galleryPhoto.classList.add('hidden');
-  uploadOverlay.classList.add('hidden');
 
   document.removeEventListener('keydown', onOverlayEscPress);
 };
@@ -142,13 +145,13 @@ galleryPhotoClose.addEventListener('keydown', function (evt) {
 });
 
 var form = document.querySelector('#upload-select-image');
-var uploadPhoto = form.querySelector('#upload-file');
+var uploadPhotoInput = form.querySelector('#upload-file');
 var uploadOverlay = form.querySelector('.upload-overlay');
 var formCancel = form.querySelector('.upload-form-cancel');
 var formDescription = form.querySelector('.upload-form-description');
 var formHashtags = form.querySelector('.upload-form-hashtags');
 var formSubmit = form.querySelector('.upload-form-submit');
-var photo = form.querySelector('.effect-image-preview');
+var photoPreview = form.querySelector('.effect-image-preview');
 var resizeControls = form.querySelector('.upload-resize-controls-value');
 var resizeControlDec = form.querySelector('.upload-resize-controls-button-dec');
 var resizeControlInc = form.querySelector('.upload-resize-controls-button-inc');
@@ -168,7 +171,7 @@ var checkSimilarHashtag = function (arr) {
 
 var checkForSpace = function (arr) {
   for (var i = 0; i < arr.length; i++) {
-    if (arr[i].slice(1).search(HASHTAG) !== -1) {
+    if (arr[i].slice(1).search(HASHTAG_SIGN) !== -1) {
       return true;
     }
   }
@@ -177,7 +180,7 @@ var checkForSpace = function (arr) {
 
 var checkCharHashtag = function (arr) {
   for (var i = 0; i < arr.length; i++) {
-    if (arr[i].slice(0, 1) !== HASHTAG) {
+    if (arr[i].slice(0, 1) !== HASHTAG_SIGN) {
       return true;
     }
   }
@@ -193,18 +196,21 @@ var checkLengthOfString = function (arr) {
   return false;
 };
 
-var checkNumberOfHashtag = function (arr) {
-  for (var i = 0; i < arr.length; i++) {
-    if (arr.length > MAX_NUMBER_OF_HASHTAG) {
-      return true;
-    }
-  }
-  return false;
+var checkMaxCountOfHashtags = function (arr) {
+  return arr.length > MAX_LENGTH_OF_HASHTAG;
+};
+
+var setErrorColorTpField = function (element) {
+  element.classList.add('upload-message-error');
+};
+
+var removeErrorColorToField = function (element) {
+  element.classList.remove('upload-message-error');
 };
 
 resizeControls.value = MAX_SCALE;
 
-uploadPhoto.addEventListener('change', function () {
+uploadPhotoInput.addEventListener('change', function () {
   uploadOverlay.classList.remove('hidden');
   document.addEventListener('keydown', onOverlayEscPress);
 });
@@ -214,49 +220,51 @@ formCancel.addEventListener('click', function () {
 });
 
 formSubmit.addEventListener('click', function (evt) {
-  var arrHashtags = formHashtags.value.split(' ');
+  var arrHashtags = formHashtags.value.split(CHAR_OF_SPACE);
+
   if (formHashtags.value.trim()) {
     if (checkCharHashtag(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.classList.add('upload-message-error');
+      formHashtags.setCustomValidity('хэш-тег начинается с символа ' + HASHTAG_SIGN + ' (решётка) и состоит из одного слова');
+      setErrorColorTpField(formHashtags);
     } else if (checkLengthOfString(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.classList.add('upload-message-error');
-    } else if (checkNumberOfHashtag(arrHashtags)) {
+      setErrorColorTpField(formHashtags);
+    } else if (checkMaxCountOfHashtags(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.classList.add('upload-message-error');
+      setErrorColorTpField(formHashtags);
     } else if (checkSimilarHashtag(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.classList.add('upload-message-error');
+      setErrorColorTpField(formHashtags);
     } else if (checkForSpace(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.classList.add('upload-message-error');
+      setErrorColorTpField(formHashtags);
     } else {
-      formHashtags.classList.remove('upload-message-error');
+      removeErrorColorToField(formHashtags);
     }
   } else {
-    formHashtags.classList.remove('upload-message-error');
+    removeErrorColorToField(formHashtags);
   }
 
   if (!formDescription.value || formDescription.validity.tooShort) {
     evt.preventDefault();
-    formDescription.classList.add('upload-message-error');
+    setErrorColorTpField(formDescription);
   } else {
-    formDescription.classList.remove('upload-message-error');
+    removeErrorColorToField(formDescription);
   }
 });
 
 resizeControlDec.addEventListener('click', function () {
   if (resizeControls.value > MIN_SCALE) {
-    resizeControls.value = resizeControls.value - MIN_SCALE;
-    photo.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
+    resizeControls.value = resizeControls.value - STEP_SCALE;
+    photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
   }
 });
 
 resizeControlInc.addEventListener('click', function () {
   if (resizeControls.value < MAX_SCALE) {
-    resizeControls.value = +resizeControls.value + MIN_SCALE;
-    photo.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
+    resizeControls.value = +resizeControls.value + STEP_SCALE;
+    photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
   }
 });
 
@@ -267,7 +275,7 @@ effectControls.addEventListener('click', function (evt) {
     var effect = target.attributes['id'].nodeValue;
 
     effect = effect.substr(INDEX_OF_STRING);
-    photo.classList.remove(photo.className);
-    photo.classList.add(effect);
+    photoPreview.classList.remove(photoPreview.className);
+    photoPreview.classList.add(effect);
   }
 });
