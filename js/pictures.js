@@ -90,10 +90,6 @@ var fillDOM = function (arr) {
 
 var onOverlayEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    if (!(formDescription === document.activeElement)) {
-      uploadOverlay.classList.add('hidden');
-      uploadPhotoInput.value = null;
-    }
     closeOverlay();
   }
 };
@@ -101,7 +97,25 @@ var onOverlayEscPress = function (evt) {
 var closeOverlay = function () {
   galleryPhoto.classList.add('hidden');
 
+  if (!(formDescription === document.activeElement)) {
+    uploadOverlay.classList.add('hidden');
+    uploadPhotoInput.value = null;
+  }
+
+  resizeControlDec.removeEventListener('click', onResizeControlDec);
+  resizeControlInc.removeEventListener('click', onResizeControlInc);
+  effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
+  formSubmit.removeEventListener('click', onInputValidity);
   document.removeEventListener('keydown', onOverlayEscPress);
+};
+
+var openOverlay = function () {
+  uploadOverlay.classList.remove('hidden');
+  resizeControlDec.addEventListener('click', onResizeControlDec);
+  resizeControlInc.addEventListener('click', onResizeControlInc);
+  effectControls.addEventListener('click', onPhotoPreviewEffectClick);
+  formSubmit.addEventListener('click', onInputValidity);
+  document.addEventListener('keydown', onOverlayEscPress);
 };
 
 var photoTemplate = document.querySelector('#picture-template').content;
@@ -208,24 +222,48 @@ var removeErrorColorToField = function (element) {
   element.classList.remove('upload-message-error');
 };
 
-resizeControls.value = MAX_SCALE;
+var setResizeControls = function (evt) {
+  var target = evt.target;
 
-uploadPhotoInput.addEventListener('change', function () {
-  uploadOverlay.classList.remove('hidden');
-  document.addEventListener('keydown', onOverlayEscPress);
-});
+  if (target === resizeControlDec) {
+    resizeControls.value = +resizeControls.value - STEP_SCALE;
+  } else if (target === resizeControlInc) {
+    resizeControls.value = +resizeControls.value + STEP_SCALE;
+  }
 
-formCancel.addEventListener('click', function () {
-  uploadOverlay.classList.add('hidden');
-});
+  photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
+};
 
-formSubmit.addEventListener('click', function (evt) {
+var onPhotoPreviewEffectClick = function (evt) {
+  var target = evt.target;
+
+  if (target.tagName.toLowerCase() === 'input') {
+    var effect = target.attributes['id'].nodeValue;
+
+    effect = effect.substr(INDEX_OF_STRING);
+    photoPreview.classList.remove(photoPreview.className);
+    photoPreview.classList.add(effect);
+  }
+};
+
+var onResizeControlDec = function (evt) {
+  if (resizeControls.value > MIN_SCALE) {
+    setResizeControls(evt);
+  }
+};
+
+var onResizeControlInc = function (evt) {
+  if (resizeControls.value < MAX_SCALE) {
+    setResizeControls(evt);
+  }
+};
+
+var onInputValidity = function (evt) {
   var arrHashtags = formHashtags.value.split(CHAR_OF_SPACE);
 
   if (formHashtags.value.trim()) {
     if (checkCharHashtag(arrHashtags)) {
       evt.preventDefault();
-      formHashtags.setCustomValidity('хэш-тег начинается с символа ' + HASHTAG_SIGN + ' (решётка) и состоит из одного слова');
       setErrorColorTpField(formHashtags);
     } else if (checkLengthOfString(arrHashtags)) {
       evt.preventDefault();
@@ -252,30 +290,15 @@ formSubmit.addEventListener('click', function (evt) {
   } else {
     removeErrorColorToField(formDescription);
   }
+};
+
+resizeControls.value = MAX_SCALE;
+
+
+uploadPhotoInput.addEventListener('change', function () {
+  openOverlay();
 });
 
-resizeControlDec.addEventListener('click', function () {
-  if (resizeControls.value > MIN_SCALE) {
-    resizeControls.value = resizeControls.value - STEP_SCALE;
-    photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
-  }
-});
-
-resizeControlInc.addEventListener('click', function () {
-  if (resizeControls.value < MAX_SCALE) {
-    resizeControls.value = +resizeControls.value + STEP_SCALE;
-    photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
-  }
-});
-
-effectControls.addEventListener('click', function (evt) {
-  var target = evt.target;
-
-  if (target.tagName.toLowerCase() === 'input') {
-    var effect = target.attributes['id'].nodeValue;
-
-    effect = effect.substr(INDEX_OF_STRING);
-    photoPreview.classList.remove(photoPreview.className);
-    photoPreview.classList.add(effect);
-  }
+formCancel.addEventListener('click', function () {
+  closeOverlay();
 });
