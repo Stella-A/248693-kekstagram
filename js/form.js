@@ -76,13 +76,12 @@
     if (!(formDescription === document.activeElement)) {
       uploadOverlay.classList.add('hidden');
       uploadPhotoInput.value = null;
+      resizeControlDec.removeEventListener('click', onResizeControlDec);
+      resizeControlInc.removeEventListener('click', onResizeControlInc);
+      effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
+      formSubmit.removeEventListener('click', onInputValidity);
+      document.removeEventListener('keydown', onOverlayEscPress);
     }
-
-    resizeControlDec.removeEventListener('click', onResizeControlDec);
-    resizeControlInc.removeEventListener('click', onResizeControlInc);
-    effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
-    formSubmit.removeEventListener('click', onInputValidity);
-    document.removeEventListener('keydown', onOverlayEscPress);
   };
 
   var openOverlay = function () {
