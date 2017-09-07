@@ -42,11 +42,11 @@
   var setSliderValue = function (value) {
     effectLevelSliderPin.style.left = value + PERCENT_SIGN;
     effectSliderValue.style.width = value + PERCENT_SIGN;
-  }
+  };
 
   var setPhotoPreviewFilter = function (filter) {
     photoPreview.style.filter = filter;
-  }
+  };
 
   var setDefaultEffectLevel = function () {
     var effect = photoPreview.classList.value.slice(7);
