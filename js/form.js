@@ -58,7 +58,7 @@
     } else {
       photoPreview.style.filter = 'none';
     }
-  }
+  };
 
   var onPhotoPreviewEffectClick = function (evt) {
     var target = evt.target;
@@ -116,7 +116,7 @@
 
   var hideBodyScroll = function () {
     document.body.style.overflow = 'hidden';
-  }
+  };
 
   var showBodyScroll = function () {
     document.body.style.overflow = 'auto';
