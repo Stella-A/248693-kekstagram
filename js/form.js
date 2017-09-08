@@ -6,9 +6,18 @@
   var STEP_SCALE = 25;
   var INDEX_OF_STRING = 7;
   var HASHTAG_SIGN = '#';
+  var PERCENT_SIGN = '%';
+  var PIXEL_SIGN = 'px';
   var MAX_LENGTH_OF_HASHTAG = 5;
   var MAX_CHAR_OF_STRING = 20;
   var CHAR_OF_SPACE = ' ';
+  var MAX_VALUE_SLIDER = 455;
+  var MIN_VALUE_SLIDER = 0;
+  var MAX_PERCENT_VALUE_SLIDER = 100;
+  var MAX_VALUE_GRAYSCALE = 1;
+  var MAX_VALUE_SEPIA = 1;
+  var MAX_VALUE_BLUR = 3;
+  var MAX_VALUE_BRIGHTNESS = 3;
 
   var onResizeControlDec = function (evt) {
     if (resizeControls.value > MIN_SCALE) {
@@ -22,6 +31,47 @@
     }
   };
 
+  var addOrRemoveSlider = function (effect) {
+    if (effect === 'effect-none') {
+      effectSliderPin.classList.add('hidden');
+    } else {
+      effectSliderPin.classList.remove('hidden');
+    }
+  };
+
+  var setSliderValue = function (value) {
+    effectLevelSliderPin.style.left = value + PERCENT_SIGN;
+    effectSliderValue.style.width = value + PERCENT_SIGN;
+  };
+
+  var setPhotoPreviewFilter = function (filter) {
+    photoPreview.style.filter = filter;
+  };
+
+  var setDefaultEffectLevel = function () {
+    var effect = photoPreview.classList.value.slice(7);
+
+    switch (effect) {
+      case 'chrome':
+        setPhotoPreviewFilter('grayscale(' + MAX_VALUE_GRAYSCALE + ')');
+        break;
+      case 'sepia':
+        setPhotoPreviewFilter('sepia(' + MAX_VALUE_SEPIA + ')');
+        break;
+      case 'marvin':
+        setPhotoPreviewFilter('invert(' + MAX_PERCENT_VALUE_SLIDER + PERCENT_SIGN + ')');
+        break;
+      case 'phobos':
+        setPhotoPreviewFilter('blur(' + MAX_VALUE_BLUR + PIXEL_SIGN + ')');
+        break;
+      case 'heat':
+        setPhotoPreviewFilter('brightness(' + MAX_VALUE_BRIGHTNESS + ')');
+        break;
+      default:
+        setPhotoPreviewFilter('none');
+    }
+  };
+
   var onPhotoPreviewEffectClick = function (evt) {
     var target = evt.target;
 
@@ -31,6 +81,10 @@
       effect = effect.substr(INDEX_OF_STRING);
       photoPreview.classList.remove(photoPreview.className);
       photoPreview.classList.add(effect);
+
+      addOrRemoveSlider(effect);
+      setSliderValue(MAX_PERCENT_VALUE_SLIDER);
+      setDefaultEffectLevel();
     }
   };
 
@@ -72,6 +126,14 @@
     window.util.isEscPress(evt, closeOverlay);
   };
 
+  var hideBodyScroll = function () {
+    document.body.style.overflow = 'hidden';
+  };
+
+  var showBodyScroll = function () {
+    document.body.style.overflow = 'auto';
+  };
+
   var closeOverlay = function () {
     if (!(formDescription === document.activeElement)) {
       uploadOverlay.classList.add('hidden');
@@ -81,6 +143,7 @@
       effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
       formSubmit.removeEventListener('click', onInputValidity);
       document.removeEventListener('keydown', onOverlayEscPress);
+      showBodyScroll();
     }
   };
 
@@ -91,6 +154,9 @@
     effectControls.addEventListener('click', onPhotoPreviewEffectClick);
     formSubmit.addEventListener('click', onInputValidity);
     document.addEventListener('keydown', onOverlayEscPress);
+    effectSliderPin.classList.add('hidden');
+
+    hideBodyScroll();
   };
 
   var checkSimilarHashtag = function (arr) {
@@ -168,6 +234,82 @@
   var resizeControlDec = form.querySelector('.upload-resize-controls-button-dec');
   var resizeControlInc = form.querySelector('.upload-resize-controls-button-inc');
   var effectControls = form.querySelector('.upload-effect-controls');
+  var effectSliderPin = effectControls.querySelector('.upload-effect-level');
+  var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
+  var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
+
+  effectLevelSliderPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX
+      };
+
+      startCoords = {
+        x: moveEvt.clientX
+      };
+
+      var sliderValue = evt.target.offsetLeft - shift.x;
+      var effectValue = sliderValue * MAX_PERCENT_VALUE_SLIDER / MAX_VALUE_SLIDER;
+
+      if (sliderValue > MAX_VALUE_SLIDER) {
+        effectValue = MAX_PERCENT_VALUE_SLIDER;
+        setSliderValue(effectValue);
+      } else if (sliderValue < MIN_VALUE_SLIDER) {
+        effectValue = MIN_VALUE_SLIDER;
+        setSliderValue(effectValue);
+      } else {
+        setSliderValue(effectValue);
+      }
+
+      var setEffectLevel = function () {
+        var effect = photoPreview.classList.value.slice(7);
+
+        switch (effect) {
+          case 'chrome':
+            effectValue = MAX_VALUE_GRAYSCALE * effectValue / MAX_PERCENT_VALUE_SLIDER;
+            setPhotoPreviewFilter('grayscale(' + effectValue + ')');
+            break;
+          case 'sepia':
+            effectValue = MAX_VALUE_SEPIA * effectValue / MAX_PERCENT_VALUE_SLIDER;
+            setPhotoPreviewFilter('sepia(' + effectValue + ')');
+            break;
+          case 'marvin':
+            setPhotoPreviewFilter('invert(' + effectValue + PERCENT_SIGN + ')');
+            break;
+          case 'phobos':
+            effectValue = MAX_VALUE_BLUR * effectValue / MAX_PERCENT_VALUE_SLIDER;
+            setPhotoPreviewFilter('blur(' + effectValue + PIXEL_SIGN + ')');
+            break;
+          case 'heat':
+            effectValue = MAX_VALUE_BRIGHTNESS * effectValue / MAX_PERCENT_VALUE_SLIDER;
+            setPhotoPreviewFilter('brightness(' + effectValue + ')');
+            break;
+          default:
+            setPhotoPreviewFilter('none');
+        }
+      };
+
+      setEffectLevel();
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   resizeControls.value = MAX_SCALE;
 
