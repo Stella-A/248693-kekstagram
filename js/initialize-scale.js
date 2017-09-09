@@ -17,7 +17,7 @@
         break;
       case resizeControlInc:
         value += STEP_SCALE;
-        value = (value > MAX_SCALE) ? MAX_SCALE : value;
+        value = (value > window.MAX_SCALE) ? window.MAX_SCALE : value;
         break;
     }
 
@@ -26,5 +26,5 @@
     if (typeof adjustScale === 'function') {
       adjustScale(value);
     }
-  }
+  };
 })();
