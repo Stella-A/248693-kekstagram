@@ -1,10 +1,6 @@
 'use strict';
 
 (function () {
-  var MIN_SCALE = 25;
-  var MAX_SCALE = 100;
-  var STEP_SCALE = 25;
-  var INDEX_OF_STRING = 7;
   var HASHTAG_SIGN = '#';
   var PERCENT_SIGN = '%';
   var PIXEL_SIGN = 'px';
@@ -19,23 +15,17 @@
   var MAX_VALUE_BLUR = 3;
   var MAX_VALUE_BRIGHTNESS = 3;
 
-  var onResizeControlDec = function (evt) {
-    if (resizeControls.value > MIN_SCALE) {
-      setResizeControls(evt);
-    }
-  };
-
-  var onResizeControlInc = function (evt) {
-    if (resizeControls.value < MAX_SCALE) {
-      setResizeControls(evt);
-    }
-  };
-
   var addOrRemoveSlider = function (effect) {
-    if (effect === 'effect-none') {
-      effectSliderPin.classList.add('hidden');
-    } else {
-      effectSliderPin.classList.remove('hidden');
+    switch (effect) {
+      case 'effect-image-preview':
+        effectSliderPin.classList.add('hidden');
+        break;
+      case 'effect-none':
+        effectSliderPin.classList.add('hidden');
+        break;
+      default:
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
+        effectSliderPin.classList.remove('hidden');
     }
   };
 
@@ -48,23 +38,21 @@
     photoPreview.style.filter = filter;
   };
 
-  var setDefaultEffectLevel = function () {
-    var effect = photoPreview.classList.value.slice(7);
-
+  var setDefaultEffectLevel = function (effect) {
     switch (effect) {
-      case 'chrome':
+      case 'effect-chrome':
         setPhotoPreviewFilter('grayscale(' + MAX_VALUE_GRAYSCALE + ')');
         break;
-      case 'sepia':
+      case 'effect-sepia':
         setPhotoPreviewFilter('sepia(' + MAX_VALUE_SEPIA + ')');
         break;
-      case 'marvin':
+      case 'effect-marvin':
         setPhotoPreviewFilter('invert(' + MAX_PERCENT_VALUE_SLIDER + PERCENT_SIGN + ')');
         break;
-      case 'phobos':
+      case 'effect-phobos':
         setPhotoPreviewFilter('blur(' + MAX_VALUE_BLUR + PIXEL_SIGN + ')');
         break;
-      case 'heat':
+      case 'effect-heat':
         setPhotoPreviewFilter('brightness(' + MAX_VALUE_BRIGHTNESS + ')');
         break;
       default:
@@ -72,20 +60,12 @@
     }
   };
 
-  var onPhotoPreviewEffectClick = function (evt) {
-    var target = evt.target;
+  var applyFilter = function (effect) {
+    photoPreview.classList.remove(photoPreview.className);
+    photoPreview.classList.add(effect);
 
-    if (target.tagName.toLowerCase() === 'input') {
-      var effect = target.attributes['id'].nodeValue;
-
-      effect = effect.substr(INDEX_OF_STRING);
-      photoPreview.classList.remove(photoPreview.className);
-      photoPreview.classList.add(effect);
-
-      addOrRemoveSlider(effect);
-      setSliderValue(MAX_PERCENT_VALUE_SLIDER);
-      setDefaultEffectLevel();
-    }
+    addOrRemoveSlider(effect);
+    setDefaultEffectLevel(effect);
   };
 
   var onInputValidity = function (evt) {
@@ -138,24 +118,21 @@
     if (!(formDescription === document.activeElement)) {
       uploadOverlay.classList.add('hidden');
       uploadPhotoInput.value = null;
-      resizeControlDec.removeEventListener('click', onResizeControlDec);
-      resizeControlInc.removeEventListener('click', onResizeControlInc);
-      effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
+
       formSubmit.removeEventListener('click', onInputValidity);
       document.removeEventListener('keydown', onOverlayEscPress);
+
       showBodyScroll();
     }
   };
 
   var openOverlay = function () {
     uploadOverlay.classList.remove('hidden');
-    resizeControlDec.addEventListener('click', onResizeControlDec);
-    resizeControlInc.addEventListener('click', onResizeControlInc);
-    effectControls.addEventListener('click', onPhotoPreviewEffectClick);
+
     formSubmit.addEventListener('click', onInputValidity);
     document.addEventListener('keydown', onOverlayEscPress);
-    effectSliderPin.classList.add('hidden');
 
+    addOrRemoveSlider(photoPreview.classList.value);
     hideBodyScroll();
   };
 
@@ -210,16 +187,8 @@
     element.classList.remove('upload-message-error');
   };
 
-  var setResizeControls = function (evt) {
-    var target = evt.target;
-
-    if (target === resizeControlDec) {
-      resizeControls.value = +resizeControls.value - STEP_SCALE;
-    } else if (target === resizeControlInc) {
-      resizeControls.value = +resizeControls.value + STEP_SCALE;
-    }
-
-    photoPreview.style.transform = 'scale(' + resizeControls.value / MAX_SCALE + ')';
+  var adjustScale = function (value) {
+    photoPreview.style.transform = 'scale(' + value / window.MAX_SCALE + ')';
   };
 
   var form = document.querySelector('#upload-select-image');
@@ -230,11 +199,9 @@
   var formHashtags = form.querySelector('.upload-form-hashtags');
   var formSubmit = form.querySelector('.upload-form-submit');
   var photoPreview = form.querySelector('.effect-image-preview');
-  var resizeControls = form.querySelector('.upload-resize-controls-value');
-  var resizeControlDec = form.querySelector('.upload-resize-controls-button-dec');
-  var resizeControlInc = form.querySelector('.upload-resize-controls-button-inc');
-  var effectControls = form.querySelector('.upload-effect-controls');
-  var effectSliderPin = effectControls.querySelector('.upload-effect-level');
+  var scaleElement = form.querySelector('.upload-resize-controls');
+  var filterElement = form.querySelector('.upload-effect-controls');
+  var effectSliderPin = filterElement.querySelector('.upload-effect-level');
   var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
   var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
 
@@ -311,8 +278,6 @@
     document.addEventListener('mouseup', onMouseUp);
   });
 
-  resizeControls.value = MAX_SCALE;
-
   uploadPhotoInput.addEventListener('change', function () {
     openOverlay();
   });
@@ -320,4 +285,7 @@
   formCancel.addEventListener('click', function () {
     closeOverlay();
   });
+
+  window.initializeScale(scaleElement, adjustScale);
+  window.initializeFilters(filterElement, applyFilter);
 })();
