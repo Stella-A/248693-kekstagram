@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var INDEX_OF_STRING = 7;
   var HASHTAG_SIGN = '#';
   var PERCENT_SIGN = '%';
   var PIXEL_SIGN = 'px';
@@ -62,20 +61,13 @@
     }
   };
 
-  var applyFilter = function (evt, elem) {
-    var effect = evt.target.attributes['id'].nodeValue;
-
-    effect = effect.substr(INDEX_OF_STRING);
-    elem.classList.remove(elem.className);
-    elem.classList.add(effect);
+  var applyFilter = function (effect) {
+    photoPreview.classList.remove(photoPreview.className);
+    photoPreview.classList.add(effect);
 
     addOrRemoveSlider(effect);
     setSliderValue(MAX_PERCENT_VALUE_SLIDER);
     setDefaultEffectLevel();
-  };
-
-  var onPhotoPreviewEffectClick = function (evt) {
-    window.initializeFilters(evt, photoPreview, applyFilter);
   };
 
   var onInputValidity = function (evt) {
@@ -124,19 +116,13 @@
     document.body.style.overflow = 'auto';
   };
 
-  var onButtonResizeScaleClick = function (evt) {
-    window.initializeScale(evt, scaleElement, adjustScale);
-  };
-
   var closeOverlay = function () {
     if (!(formDescription === document.activeElement)) {
       uploadOverlay.classList.add('hidden');
       uploadPhotoInput.value = null;
 
-      effectControls.removeEventListener('click', onPhotoPreviewEffectClick);
       formSubmit.removeEventListener('click', onInputValidity);
       document.removeEventListener('keydown', onOverlayEscPress);
-      scaleElement.removeEventListener('click', onButtonResizeScaleClick);
 
       showBodyScroll();
     }
@@ -145,10 +131,8 @@
   var openOverlay = function () {
     uploadOverlay.classList.remove('hidden');
 
-    effectControls.addEventListener('click', onPhotoPreviewEffectClick);
     formSubmit.addEventListener('click', onInputValidity);
     document.addEventListener('keydown', onOverlayEscPress);
-    scaleElement.addEventListener('click', onButtonResizeScaleClick);
 
     addOrRemoveSlider(photoPreview.classList.value);
     hideBodyScroll();
@@ -217,6 +201,7 @@
   var formHashtags = form.querySelector('.upload-form-hashtags');
   var formSubmit = form.querySelector('.upload-form-submit');
   var photoPreview = form.querySelector('.effect-image-preview');
+  var filterElement = form.querySelector('.upload-effect-controls');
   var scaleElement = form.querySelector('.upload-resize-controls');
   var effectControls = form.querySelector('.upload-effect-controls');
   var effectSliderPin = effectControls.querySelector('.upload-effect-level');
@@ -303,4 +288,7 @@
   formCancel.addEventListener('click', function () {
     closeOverlay();
   });
+
+  window.initializeScale(scaleElement, adjustScale);
+  window.initializeFilters(filterElement, applyFilter);
 })();
