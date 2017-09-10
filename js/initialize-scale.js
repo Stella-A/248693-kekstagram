@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  window.initializeScale = function (elem, adjustScale) {
+  window.initializeScale = function (elem, onScaleChange) {
     window.MAX_SCALE = 100;
     var MIN_SCALE = 25;
     var STEP_SCALE = 25;
@@ -24,8 +24,8 @@
 
       resizeControls.value = value + '%';
 
-      if (typeof adjustScale === 'function') {
-        adjustScale(value);
+      if (typeof onScaleChange === 'function') {
+        onScaleChange(value);
       }
     };
 

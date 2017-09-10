@@ -37,23 +37,26 @@
     photoPreview.style.filter = filter;
   };
 
-  var setDefaultEffectLevel = function () {
-    var effect = photoPreview.classList.value.slice(7);
-
+  var setDefaultEffectLevel = function (effect) {
     switch (effect) {
-      case 'chrome':
+      case 'effect-chrome':
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('grayscale(' + MAX_VALUE_GRAYSCALE + ')');
         break;
-      case 'sepia':
+      case 'effect-sepia':
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('sepia(' + MAX_VALUE_SEPIA + ')');
         break;
-      case 'marvin':
+      case 'effect-marvin':
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('invert(' + MAX_PERCENT_VALUE_SLIDER + PERCENT_SIGN + ')');
         break;
-      case 'phobos':
+      case 'effect-phobos':
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('blur(' + MAX_VALUE_BLUR + PIXEL_SIGN + ')');
         break;
-      case 'heat':
+      case 'effect-heat':
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('brightness(' + MAX_VALUE_BRIGHTNESS + ')');
         break;
       default:
@@ -66,8 +69,7 @@
     photoPreview.classList.add(effect);
 
     addOrRemoveSlider(effect);
-    setSliderValue(MAX_PERCENT_VALUE_SLIDER);
-    setDefaultEffectLevel();
+    setDefaultEffectLevel(effect);
   };
 
   var onInputValidity = function (evt) {
@@ -201,10 +203,9 @@
   var formHashtags = form.querySelector('.upload-form-hashtags');
   var formSubmit = form.querySelector('.upload-form-submit');
   var photoPreview = form.querySelector('.effect-image-preview');
-  var filterElement = form.querySelector('.upload-effect-controls');
   var scaleElement = form.querySelector('.upload-resize-controls');
-  var effectControls = form.querySelector('.upload-effect-controls');
-  var effectSliderPin = effectControls.querySelector('.upload-effect-level');
+  var filterElement = form.querySelector('.upload-effect-controls');
+  var effectSliderPin = filterElement.querySelector('.upload-effect-level');
   var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
   var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
 

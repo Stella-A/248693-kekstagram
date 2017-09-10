@@ -1,19 +1,19 @@
 'use strict';
 
 (function () {
-  window.initializeFilters = function (elem, applyFilter) {
+  window.initializeFilters = function (elem, onFilterChange) {
     var INDEX_OF_STRING = 7;
 
-    var onPhotoPreviewEffectClick = function (evt) {
+    var onFilterControlClick = function (evt) {
       if (evt.target.tagName.toLowerCase() === 'input') {
-        if (typeof applyFilter === 'function') {
+        if (typeof onFilterChange === 'function') {
           var effect = evt.target.attributes['id'].nodeValue;
           effect = effect.substr(INDEX_OF_STRING);
-          applyFilter(effect);
+          onFilterChange(effect);
         }
       }
     };
 
-    elem.addEventListener('click', onPhotoPreviewEffectClick);
+    elem.addEventListener('click', onFilterControlClick);
   };
 })();
