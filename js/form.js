@@ -24,6 +24,7 @@
         effectSliderPin.classList.add('hidden');
         break;
       default:
+        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         effectSliderPin.classList.remove('hidden');
     }
   };
@@ -40,23 +41,18 @@
   var setDefaultEffectLevel = function (effect) {
     switch (effect) {
       case 'effect-chrome':
-        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('grayscale(' + MAX_VALUE_GRAYSCALE + ')');
         break;
       case 'effect-sepia':
-        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('sepia(' + MAX_VALUE_SEPIA + ')');
         break;
       case 'effect-marvin':
-        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('invert(' + MAX_PERCENT_VALUE_SLIDER + PERCENT_SIGN + ')');
         break;
       case 'effect-phobos':
-        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('blur(' + MAX_VALUE_BLUR + PIXEL_SIGN + ')');
         break;
       case 'effect-heat':
-        setSliderValue(MAX_PERCENT_VALUE_SLIDER);
         setPhotoPreviewFilter('brightness(' + MAX_VALUE_BRIGHTNESS + ')');
         break;
       default:
