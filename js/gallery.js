@@ -15,7 +15,7 @@
 
   var photos = window.data.createPhotos();
 
-  window.pictures.fillDOM(photos);
+  window.backend.load(window.pictures.fillDOM);
 
   window.pictures.listElement.addEventListener('click', function (evt) {
     evt.preventDefault();

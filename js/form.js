@@ -191,7 +191,23 @@
     photoPreview.style.transform = 'scale(' + value / window.MAX_SCALE + ')';
   };
 
-  var form = document.querySelector('#upload-select-image');
+  var onError = function (message) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  var resetForm = function () {
+    formHashtags.value = '';
+    formDescription.value = '';
+    applyFilter('effect-none');
+    effectNone.checked = true;
+    document.querySelector('.error-message').classList.add('hidden');
+  };
+
+  window.form = document.querySelector('#upload-select-image');
   var uploadPhotoInput = form.querySelector('#upload-file');
   var uploadOverlay = form.querySelector('.upload-overlay');
   var formCancel = form.querySelector('.upload-form-cancel');
@@ -204,6 +220,7 @@
   var effectSliderPin = filterElement.querySelector('.upload-effect-level');
   var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
   var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
+  var effectNone = form.querySelector('input#upload-effect-none');
 
   effectLevelSliderPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -288,4 +305,12 @@
 
   window.initializeScale(scaleElement, adjustScale);
   window.initializeFilters(filterElement, applyFilter);
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(form), function () {
+      closeOverlay();
+      resetForm();
+    }, onError);
+  });
 })();
