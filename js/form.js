@@ -123,6 +123,7 @@
       document.removeEventListener('keydown', onOverlayEscPress);
 
       showBodyScroll();
+      resetForm();
     }
   };
 
@@ -188,7 +189,7 @@
   };
 
   var adjustScale = function (value) {
-    photoPreview.style.transform = 'scale(' + value / window.MAX_SCALE + ')';
+    photoPreview.style.transform = 'scale(' + value / window.scale.MAX_SCALE + ')';
   };
 
   var onError = function (message) {
@@ -196,31 +197,30 @@
     node.classList.add('error-message');
 
     node.textContent = message;
-    document.body.insertAdjacentElement('afterbegin', node);
+    document.body.prepend(node);
   };
 
   var resetForm = function () {
     formHashtags.value = '';
     formDescription.value = '';
-    applyFilter('effect-none');
-    effectNone.checked = true;
-    window.removeError();
+    window.gallery.removeError();
+    window.scale.setDefault(scaleElement, adjustScale);
+    window.filters.setDefault(form, applyFilter);
   };
 
-  window.form = document.querySelector('#upload-select-image');
-  var uploadPhotoInput = window.form.querySelector('#upload-file');
-  var uploadOverlay = window.form.querySelector('.upload-overlay');
-  var formCancel = window.form.querySelector('.upload-form-cancel');
-  var formDescription = window.form.querySelector('.upload-form-description');
-  var formHashtags = window.form.querySelector('.upload-form-hashtags');
-  var formSubmit = window.form.querySelector('.upload-form-submit');
-  var photoPreview = window.form.querySelector('.effect-image-preview');
-  var scaleElement = window.form.querySelector('.upload-resize-controls');
-  var filterElement = window.form.querySelector('.upload-effect-controls');
+  var form = document.querySelector('#upload-select-image');
+  var uploadPhotoInput = form.querySelector('#upload-file');
+  var uploadOverlay = form.querySelector('.upload-overlay');
+  var formCancel = form.querySelector('.upload-form-cancel');
+  var formDescription = form.querySelector('.upload-form-description');
+  var formHashtags = form.querySelector('.upload-form-hashtags');
+  var formSubmit = form.querySelector('.upload-form-submit');
+  var photoPreview = form.querySelector('.effect-image-preview');
+  var scaleElement = form.querySelector('.upload-resize-controls');
+  var filterElement = form.querySelector('.upload-effect-controls');
   var effectSliderPin = filterElement.querySelector('.upload-effect-level');
   var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
   var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
-  var effectNone = window.form.querySelector('input#upload-effect-none');
 
   effectLevelSliderPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -303,14 +303,13 @@
     closeOverlay();
   });
 
-  window.initializeScale(scaleElement, adjustScale);
-  window.initializeFilters(filterElement, applyFilter);
+  window.scale.initialize(scaleElement, adjustScale);
+  window.filters.initialize(filterElement, applyFilter);
 
-  window.form.addEventListener('submit', function (evt) {
+  form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(window.form), function () {
+    window.backend.save(new FormData(form), function () {
       closeOverlay();
-      resetForm();
     }, onError);
   });
 })();

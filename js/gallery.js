@@ -15,16 +15,10 @@
 
   var photos = [];
 
-  window.removeError = function () {
-    if (document.querySelector('.error-message')) {
-      document.querySelector('.error-message').classList.add('hidden');
-    }
-  };
-
-  var onSuccess = function (success) {
-    photos = success;
+  var onSuccess = function (response) {
+    photos = response;
     window.pictures.fillDOM(photos);
-    window.removeError();
+    window.gallery.removeError();
   };
 
   var onError = function (message) {
@@ -32,7 +26,7 @@
     node.classList.add('error-message');
 
     node.textContent = message;
-    document.body.insertAdjacentElement('afterbegin', node);
+    document.body.prepend(node);
   };
 
   window.backend.load(onSuccess, onError);
@@ -64,4 +58,12 @@
   galleryPhotoClose.addEventListener('keydown', function (evt) {
     window.util.isEnterPress(evt, closeOverlay);
   });
+
+  window.gallery = {
+    removeError: function () {
+      if (document.querySelector('.error-message')) {
+        document.querySelector('.error-message').classList.add('hidden');
+      }
+    }
+  };
 })();
