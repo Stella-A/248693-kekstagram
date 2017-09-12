@@ -107,8 +107,6 @@
 
     while (target !== current) {
       if (target.className === 'picture') {
-        var index = target.attributes['data-id'].nodeValue;
-
         window.preview.galleryPhoto.classList.remove('hidden');
         window.preview.galleryPhoto.appendChild(window.preview.renderGalleryPhoto(target));
         galleryPhotoImage.focus();
