@@ -9,5 +9,5 @@
       window.clearTimeout(lastTimeout);
     }
     lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
-  }
+  };
 })();

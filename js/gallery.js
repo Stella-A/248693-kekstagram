@@ -50,8 +50,8 @@
     for (var i = 0; i < arr.length; i++) {
       var randomIndex = window.util.getRandomInteger(0, arr.length - 1);
       sortedArray.push(arr[randomIndex]);
-      var uniqueWizards = sortedArray.filter(function (it, i) {
-        return sortedArray.indexOf(it) === i;
+      uniqueWizards = sortedArray.filter(function (it, j) {
+        return sortedArray.indexOf(it) === j;
       });
     }
 
@@ -68,7 +68,7 @@
       if (target.className === 'filters-item') {
         var targetId = target.attributes['for'].nodeValue;
 
-        switch(targetId) {
+        switch (targetId) {
           case 'filter-recommend':
             window.debounce(function () {
               window.pictures.fillDOM(photos);
@@ -81,15 +81,15 @@
             break;
           case 'filter-discussed':
             window.debounce(function () {
-              window.pictures.fillDOM(getDiscussedSorted(photos))
+              window.pictures.fillDOM(getDiscussedSorted(photos));
             });
             break;
           case 'filter-random':
             window.debounce(function () {
-              window.pictures.fillDOM(getRandomSorted(photos))
+              window.pictures.fillDOM(getRandomSorted(photos));
             });
             break;
-          }
+        }
 
         return;
       }
