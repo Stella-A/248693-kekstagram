@@ -204,23 +204,23 @@
     formDescription.value = '';
     applyFilter('effect-none');
     effectNone.checked = true;
-    document.querySelector('.error-message').classList.add('hidden');
+    window.removeError();
   };
 
   window.form = document.querySelector('#upload-select-image');
-  var uploadPhotoInput = form.querySelector('#upload-file');
-  var uploadOverlay = form.querySelector('.upload-overlay');
-  var formCancel = form.querySelector('.upload-form-cancel');
-  var formDescription = form.querySelector('.upload-form-description');
-  var formHashtags = form.querySelector('.upload-form-hashtags');
-  var formSubmit = form.querySelector('.upload-form-submit');
-  var photoPreview = form.querySelector('.effect-image-preview');
-  var scaleElement = form.querySelector('.upload-resize-controls');
-  var filterElement = form.querySelector('.upload-effect-controls');
+  var uploadPhotoInput = window.form.querySelector('#upload-file');
+  var uploadOverlay = window.form.querySelector('.upload-overlay');
+  var formCancel = window.form.querySelector('.upload-form-cancel');
+  var formDescription = window.form.querySelector('.upload-form-description');
+  var formHashtags = window.form.querySelector('.upload-form-hashtags');
+  var formSubmit = window.form.querySelector('.upload-form-submit');
+  var photoPreview = window.form.querySelector('.effect-image-preview');
+  var scaleElement = window.form.querySelector('.upload-resize-controls');
+  var filterElement = window.form.querySelector('.upload-effect-controls');
   var effectSliderPin = filterElement.querySelector('.upload-effect-level');
   var effectLevelSliderPin = effectSliderPin.querySelector('.upload-effect-level-pin');
   var effectSliderValue = effectSliderPin.querySelector('.upload-effect-level-val');
-  var effectNone = form.querySelector('input#upload-effect-none');
+  var effectNone = window.form.querySelector('input#upload-effect-none');
 
   effectLevelSliderPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -306,9 +306,9 @@
   window.initializeScale(scaleElement, adjustScale);
   window.initializeFilters(filterElement, applyFilter);
 
-  form.addEventListener('submit', function (evt) {
+  window.form.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(form), function () {
+    window.backend.save(new FormData(window.form), function () {
       closeOverlay();
       resetForm();
     }, onError);

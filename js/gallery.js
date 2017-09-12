@@ -13,9 +13,29 @@
     document.removeEventListener('keydown', onOverlayEscPress);
   };
 
-  var photos = window.data.createPhotos();
+  var photos = [];
 
-  window.backend.load(window.pictures.fillDOM);
+  window.removeError = function () {
+    if (document.querySelector('.error-message')) {
+      document.querySelector('.error-message').classList.add('hidden');
+    }
+  };
+
+  var onSuccess = function (success) {
+    photos = success;
+    window.pictures.fillDOM(photos);
+    window.removeError();
+  };
+
+  var onError = function (message) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = message;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+  window.backend.load(onSuccess, onError);
 
   window.pictures.listElement.addEventListener('click', function (evt) {
     evt.preventDefault();

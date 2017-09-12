@@ -10,14 +10,6 @@
     var resizeControls = elem.querySelector('.upload-resize-controls-value');
     var value = parseInt(resizeControls.value, 10);
 
-    var resetScale = function () {
-      value = window.MAX_SCALE;
-      resizeControls.value = value + '%';
-      if (typeof onScaleChange === 'function') {
-        onScaleChange(value);
-      }
-    };
-
     var onButtonResizeScaleClick = function (evt) {
       switch (evt.target) {
         case resizeControlDec:
@@ -38,7 +30,7 @@
     };
 
     window.form.addEventListener('submit', function () {
-      setTimeout( function () {
+      setTimeout(function () {
         value = window.MAX_SCALE;
         resizeControls.value = value + '%';
         if (typeof onScaleChange === 'function') {
