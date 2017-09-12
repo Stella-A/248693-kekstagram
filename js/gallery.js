@@ -13,9 +13,23 @@
     document.removeEventListener('keydown', onOverlayEscPress);
   };
 
-  var photos = window.data.createPhotos();
+  var photos = [];
 
-  window.pictures.fillDOM(photos);
+  var onSuccess = function (response) {
+    photos = response;
+    window.pictures.fillDOM(photos);
+    window.gallery.removeError();
+  };
+
+  var onError = function (message) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = message;
+    document.body.prepend(node);
+  };
+
+  window.backend.load(onSuccess, onError);
 
   window.pictures.listElement.addEventListener('click', function (evt) {
     evt.preventDefault();
@@ -44,4 +58,12 @@
   galleryPhotoClose.addEventListener('keydown', function (evt) {
     window.util.isEnterPress(evt, closeOverlay);
   });
+
+  window.gallery = {
+    removeError: function () {
+      if (document.querySelector('.error-message')) {
+        document.querySelector('.error-message').classList.add('hidden');
+      }
+    }
+  };
 })();

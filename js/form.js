@@ -123,6 +123,7 @@
       document.removeEventListener('keydown', onOverlayEscPress);
 
       showBodyScroll();
+      resetForm();
     }
   };
 
@@ -188,7 +189,23 @@
   };
 
   var adjustScale = function (value) {
-    photoPreview.style.transform = 'scale(' + value / window.MAX_SCALE + ')';
+    photoPreview.style.transform = 'scale(' + value / window.scale.MAX_SCALE + ')';
+  };
+
+  var onError = function (message) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = message;
+    document.body.prepend(node);
+  };
+
+  var resetForm = function () {
+    formHashtags.value = '';
+    formDescription.value = '';
+    window.gallery.removeError();
+    window.scale.setDefault();
+    window.filters.setDefault();
   };
 
   var form = document.querySelector('#upload-select-image');
@@ -286,6 +303,13 @@
     closeOverlay();
   });
 
-  window.initializeScale(scaleElement, adjustScale);
-  window.initializeFilters(filterElement, applyFilter);
+  window.scale.initialize(scaleElement, adjustScale);
+  window.filters.initialize(filterElement, applyFilter);
+
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(form), function () {
+      closeOverlay();
+    }, onError);
+  });
 })();
