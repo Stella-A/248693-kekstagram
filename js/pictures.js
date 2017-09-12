@@ -23,6 +23,7 @@
         fragment.appendChild(renderPhoto(arr[i], i));
       }
 
+      window.pictures.listElement.innerHTML = '';
       window.pictures.listElement.appendChild(fragment);
     }
   };
