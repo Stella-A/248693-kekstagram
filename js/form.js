@@ -204,7 +204,7 @@
     formHashtags.value = '';
     formDescription.value = '';
     window.gallery.removeError();
-    window.scale.setDefault(scaleElement, adjustScale);
+    window.scale.setDefault();
     window.filters.setDefault(form, applyFilter);
   };
 

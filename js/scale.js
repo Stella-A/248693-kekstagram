@@ -3,16 +3,29 @@
 (function () {
   var MIN_SCALE = 25;
   var STEP_SCALE = 25;
+  var scaleElement;
+  var onScaleChange;
+
+  var setScaleValue = function (controls, value) {
+    controls.value = value + '%';
+
+    if (typeof onScaleChange === 'function') {
+      onScaleChange(value);
+    }
+  };
 
   window.scale = {
     MAX_SCALE: 100,
-    initialize: function (elem, onScaleChange) {
-      var resizeControlDec = elem.querySelector('.upload-resize-controls-button-dec');
-      var resizeControlInc = elem.querySelector('.upload-resize-controls-button-inc');
-      var resizeControls = elem.querySelector('.upload-resize-controls-value');
-      var value = parseInt(resizeControls.value, 10);
+    initialize: function (elem, cb) {
+      scaleElement = elem;
+      onScaleChange = cb;
+      var resizeControls = scaleElement.querySelector('.upload-resize-controls-value');
+      var resizeControlDec = scaleElement.querySelector('.upload-resize-controls-button-dec');
+      var resizeControlInc = scaleElement.querySelector('.upload-resize-controls-button-inc');
+
 
       var onButtonResizeScaleClick = function (evt) {
+        var value = parseInt(resizeControls.value, 10);
         switch (evt.target) {
           case resizeControlDec:
             value -= STEP_SCALE;
@@ -24,24 +37,16 @@
             break;
         }
 
-        resizeControls.value = value + '%';
-
-        if (typeof onScaleChange === 'function') {
-          onScaleChange(value);
-        }
+        setScaleValue(resizeControls, value);
       };
 
-      elem.addEventListener('click', onButtonResizeScaleClick);
+      scaleElement.addEventListener('click', onButtonResizeScaleClick);
     },
-    setDefault: function (elem, onScaleChange) {
-      var resizeControls = elem.querySelector('.upload-resize-controls-value');
-      var value = parseInt(resizeControls.value, 10);
+    setDefault: function () {
+      var resizeControls = scaleElement.querySelector('.upload-resize-controls-value');
+      var value = window.scale.MAX_SCALE;
 
-      value = window.scale.MAX_SCALE;
-      resizeControls.value = value + '%';
-      if (typeof onScaleChange === 'function') {
-        onScaleChange(value);
-      }
+      setScaleValue(resizeControls, value);
     }
   };
 })();
