@@ -205,7 +205,7 @@
     formDescription.value = '';
     window.gallery.removeError();
     window.scale.setDefault();
-    window.filters.setDefault(form, applyFilter);
+    window.filters.setDefault();
   };
 
   var form = document.querySelector('#upload-select-image');

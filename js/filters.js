@@ -1,8 +1,13 @@
 'use strict';
 
 (function () {
+  var filterElement;
+  var onFilterChange;
+
   window.filters = {
-    initialize: function (elem, onFilterChange) {
+    initialize: function (elem, cb) {
+      filterElement = elem;
+      onFilterChange = cb;
       var INDEX_OF_STRING = 7;
 
       var onFilterControlClick = function (evt) {
@@ -15,10 +20,10 @@
         }
       };
 
-      elem.addEventListener('click', onFilterControlClick);
+      filterElement.addEventListener('click', onFilterControlClick);
     },
-    setDefault: function (elem, onFilterChange) {
-      var effectNone = elem.querySelector('input#upload-effect-none');
+    setDefault: function () {
+      var effectNone = document.querySelector('input#upload-effect-none');
 
       effectNone.checked = true;
       onFilterChange('effect-none');
