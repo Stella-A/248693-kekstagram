@@ -20,7 +20,7 @@
       var fragment = document.createDocumentFragment();
 
       for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(renderPhoto(arr[i], i));
+        fragment.appendChild(renderPhoto(arr[i], arr[i].id));
       }
 
       window.pictures.listElement.innerHTML = '';

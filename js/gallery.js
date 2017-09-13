@@ -17,7 +17,10 @@
   var photos = [];
 
   var onSuccess = function (response) {
-    photos = response;
+    photos = response.map(function (response, index) {
+      response.id = index;
+      return response;
+    });
     window.pictures.fillDOM(photos);
     filters.classList.remove('hidden');
     window.gallery.removeError();
@@ -32,30 +35,21 @@
   };
 
   var getPopularSorted = function (arr) {
-    return arr.slice(0).sort(function (left, right) {
+    return arr.slice().sort(function (left, right) {
       return right.likes - left.likes;
     });
   };
 
   var getDiscussedSorted = function (arr) {
-    return arr.slice(0).sort(function (left, right) {
+    return arr.slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
   };
 
   var getRandomSorted = function (arr) {
-    var uniqueWizards;
-    var sortedArray = [];
-
-    for (var i = 0; i < arr.length; i++) {
-      var randomIndex = window.util.getRandomInteger(0, arr.length - 1);
-      sortedArray.push(arr[randomIndex]);
-      uniqueWizards = sortedArray.filter(function (it, j) {
-        return sortedArray.indexOf(it) === j;
-      });
-    }
-
-    return uniqueWizards;
+    return arr.slice().sort(function () {
+      return 0.5 - Math.random();
+    });
   };
 
   window.backend.load(onSuccess, onError);
@@ -107,8 +101,10 @@
 
     while (target !== current) {
       if (target.className === 'picture') {
+        var index = target.attributes['data-id'].nodeValue;
+
         window.preview.galleryPhoto.classList.remove('hidden');
-        window.preview.galleryPhoto.appendChild(window.preview.renderGalleryPhoto(target));
+        window.preview.galleryPhoto.appendChild(window.preview.renderGalleryPhoto(photos[index]));
         galleryPhotoImage.focus();
 
         return;
