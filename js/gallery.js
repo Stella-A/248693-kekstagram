@@ -17,9 +17,9 @@
   var photos = [];
 
   var onSuccess = function (response) {
-    photos = response.map(function (response, index) {
-      response.id = index;
-      return response;
+    photos = response.map(function (arr, index) {
+      arr.id = index;
+      return arr;
     });
     window.pictures.fillDOM(photos);
     filters.classList.remove('hidden');
