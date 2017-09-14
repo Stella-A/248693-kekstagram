@@ -4,10 +4,10 @@
   var DEBOUNCE_INTERVAL = 500;
 
   var lastTimeout;
-  window.debounce = function (func) {
+  window.debounce = function (cb) {
     if (lastTimeout) {
       window.clearTimeout(lastTimeout);
     }
-    lastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
+    lastTimeout = window.setTimeout(cb, DEBOUNCE_INTERVAL);
   };
 })();
