@@ -3,16 +3,18 @@
 (function () {
   var SERVER_URL_SAVE = 'https://1510.dump.academy/kekstagram';
   var SERVER_URL_LOAD = 'https://1510.dump.academy/kekstagram/data';
+  var STATUS_OK = 200;
+  var TIMEOUT = 30000;
 
   var setup = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function () {
-      if (xhr.status === 200) {
+      if (xhr.status === STATUS_OK) {
         onLoad(xhr.response);
       } else {
-        onError(xhr.response);
+        onError('Ошибка: ' + xhr.status);
       }
     });
     xhr.addEventListener('error', function () {
@@ -22,7 +24,7 @@
       onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
-    xhr.timeout = 30000;
+    xhr.timeout = TIMEOUT;
 
     return xhr;
   };
