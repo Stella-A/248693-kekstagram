@@ -15,6 +15,10 @@
     window.util.isEscPress(evt, closeOverlay);
   };
 
+  var onPhotoCloseClick = function () {
+    closeOverlay();
+  };
+
   var closeOverlay = function () {
     window.preview.hide();
     document.removeEventListener('keydown', onOverlayEscPress);
@@ -120,7 +124,7 @@
     }
   });
 
-  galleryPhotoCloseElement.addEventListener('click', closeOverlay);
+  galleryPhotoCloseElement.addEventListener('click', onPhotoCloseClick);
 
   galleryPhotoCloseElement.addEventListener('keydown', function (evt) {
     window.util.isEnterPress(evt, closeOverlay);
